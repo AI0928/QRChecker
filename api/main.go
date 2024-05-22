@@ -25,41 +25,41 @@ type User struct {
 }
 
 type Lectures struct {
-	Id          int    `json:"id" param:"id"`
-	Number      int    `json:"number"`
-	Name        string `json:"name"`
-	Teacher     string `json:"teacher"`
-	Fiscal_year string `json:"fiscal_year"`
-	Start_time  string `json:"start_time"`
-	End_time    string `json:"end_time"`
+	Id         int    `json:"id" param:"id"`
+	Number     int    `json:"number" param:"lecture_id"`
+	Name       string `json:"name"`
+	Teacher    string `json:"teacher"`
+	Year       string `json:"year"`
+	Start_time string `json:"start_time"`
+	End_time   string `json:"end_time"`
 }
 
 type Attendances struct {
 	Id             int    `json:"id"`
 	Lecture_Number int    `json:"lecture_number"  param:"lecture_id"`
-	Lecture_Name   string `json:"lecture_name" param:"lecture_name"`
 	User_Number    int    `json:"user_number" param:"user_id"`
 	User_Name      string `json:"user_name" param:"user_name"`
-	First          bool   `json:"first"`
-	Second         bool   `json:"second"`
-	Third          bool   `json:"third"`
-	Fourth         bool   `json:"fourth"`
-	Fifth          bool   `json:"fifth"`
-	Sixth          bool   `json:"sixth"`
-	Seventh        bool   `json:"seventh"`
-	Eighth         bool   `json:"eighth"`
-	Ninth          bool   `json:"ninth"`
-	Tenth          bool   `json:"tenth"`
-	Eleventh       bool   `json:"eleventh"`
-	Twelfth        bool   `json:"twelfth"`
-	Thirteenth     bool   `json:"thirteenth"`
-	Fourteenth     bool   `json:"fourteenth"`
-	Fifteenth      bool   `json:"fifteenth"`
+	First          string `json:"first"`
+	Second         string `json:"second"`
+	Third          string `json:"third"`
+	Fourth         string `json:"fourth"`
+	Fifth          string `json:"fifth"`
+	Sixth          string `json:"sixth"`
+	Seventh        string `json:"seventh"`
+	Eighth         string `json:"eighth"`
+	Ninth          string `json:"ninth"`
+	Tenth          string `json:"tenth"`
+	Eleventh       string `json:"eleventh"`
+	Twelfth        string `json:"twelfth"`
+	Thirteenth     string `json:"thirteenth"`
+	Fourteenth     string `json:"fourteenth"`
+	Fifteenth      string `json:"fifteenth"`
 }
 
 func getUsers(c echo.Context) error {
 	users := []User{}
 	drivers.DB.Find(&users)
+	//fmt.Println(users)
 	return c.JSON(http.StatusOK, users)
 }
 
@@ -75,8 +75,17 @@ func getUser(c echo.Context) error {
 func getLectures(c echo.Context) error {
 	Lectures := []Lectures{}
 	drivers.DB.Find(&Lectures)
-	fmt.Println(Lectures)
+	//fmt.Println(Lectures)
 	return c.JSON(http.StatusOK, Lectures)
+}
+
+func getLecture(c echo.Context) error {
+	lecture := Lectures{}
+	if err := c.Bind(&lecture); err != nil {
+		return err
+	}
+	drivers.DB.Take(&lecture)
+	return c.JSON(http.StatusOK, lecture)
 }
 
 func getAttendances(c echo.Context) error {
@@ -87,15 +96,15 @@ func getAttendances(c echo.Context) error {
 }
 
 func updateAttendance(c echo.Context) error {
+	//fmt.Println("出席")
 	attendance := Attendances{}
 	attendances := []Attendances{}
 	drivers.DB.Find(&attendances)
 	if err := c.Bind(&attendance); err != nil {
 		return err
 	}
-
+	fmt.Println(attendance)
 	for _, a := range attendances {
-
 		if a.Lecture_Number == attendance.Lecture_Number && a.User_Number == attendance.User_Number {
 			attendance.Id = a.Id
 			attendance.First = a.First
@@ -116,40 +125,40 @@ func updateAttendance(c echo.Context) error {
 		}
 	}
 
+	//fmt.Println(c)
 	switch c.Param("count") {
 	case "first":
-		attendance.First = true
+		attendance.First = c.Param("atenndanceStatus")
 	case "second":
-		attendance.Second = true
+		attendance.Second = c.Param("atenndanceStatus")
 	case "third":
-		attendance.Third = true
+		attendance.Third = c.Param("atenndanceStatus")
 	case "fourth":
-		attendance.Fourth = true
+		attendance.Fourth = c.Param("atenndanceStatus")
 	case "fifth":
-		attendance.Fifth = true
+		attendance.Fifth = c.Param("atenndanceStatus")
 	case "sixth":
-		attendance.Sixth = true
+		attendance.Sixth = c.Param("atenndanceStatus")
 	case "seventh":
-		attendance.Seventh = true
+		attendance.Seventh = c.Param("atenndanceStatus")
 	case "eighth":
-		attendance.Eighth = true
+		attendance.Eighth = c.Param("atenndanceStatus")
 	case "ninth":
-		attendance.Ninth = true
+		attendance.Ninth = c.Param("atenndanceStatus")
 	case "tenth":
-		attendance.Tenth = true
+		attendance.Tenth = c.Param("atenndanceStatus")
 	case "eleventh":
-		attendance.Eleventh = true
+		attendance.Eleventh = c.Param("atenndanceStatus")
 	case "twelfth":
-		attendance.Twelfth = true
+		attendance.Twelfth = c.Param("atenndanceStatus")
 	case "thirteenth":
-		attendance.Thirteenth = true
+		attendance.Thirteenth = c.Param("atenndanceStatus")
 	case "fourteenth":
-		attendance.Fourteenth = true
+		attendance.Fourteenth = c.Param("atenndanceStatus")
 	case "fifteenth":
-		attendance.Fifteenth = true
+		attendance.Fifteenth = c.Param("atenndanceStatus")
 	}
 
-	//fmt.Println(attendance)
 	drivers.DB.Save(&attendance)
 	return c.JSON(http.StatusCreated, attendance)
 }
@@ -178,6 +187,10 @@ func getAttendance(c echo.Context) error {
 	return c.JSON(http.StatusCreated, returnAttendance)
 }
 
+func getHealthy(c echo.Context) error {
+	return c.JSON(http.StatusOK, "true")
+}
+
 func main() {
 	//echoのインスタンス
 	e := echo.New()
@@ -196,12 +209,14 @@ func main() {
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
 	}))
 
+	e.GET("/healthy", getHealthy)
 	e.GET("/users", getUsers)
 	e.GET("/users/:id", getUser)
 	e.GET("/lectures", getLectures)
+	e.GET("/lecture/:lecture_id", getLecture)
 	e.GET("/attendances", getAttendances)
 	e.GET("/attendances/:user_id", getAttendance)
-	e.PUT("/attendances/:lecture_id/:lecture_name/:user_id/:user_name/:count", updateAttendance)
+	e.PUT("/attendances/:lecture_id/:user_id/:user_name/:count/:atenndanceStatus", updateAttendance)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

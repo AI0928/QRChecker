@@ -3,6 +3,7 @@ package drivers
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
@@ -25,8 +26,14 @@ func Connect() {
 	database_name := os.Getenv("DB_DATABASE_NAME")
 
 	dsn := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + database_name + "?charset=utf8mb4"
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		fmt.Println(err.Error())
+
+	for {
+		DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		if err != nil {
+			fmt.Println(err.Error())
+			time.Sleep(20 * time.Second)
+		} else {
+			break
+		}
 	}
 }
