@@ -7,10 +7,9 @@ CREATE TABLE lectures (
   `number` INT,
   `name` VARCHAR(255),
   `teacher` VARCHAR(255),
-  `fiscal_year` DATE,
   `start_time` TIME,
-  `end_time` TIME,
+  `lecture_time` TIME,
   PRIMARY KEY (`id`)
 );
 
-INSERT INTO lectures VALUES (1, 1111, "asdf", "asdf" ,'2023-01-17', '15:25:07', '15:25:07');
+INSERT INTO lectures VALUES (1, 1000, "授業１", "鈴木一郎" , '12:00:00', '1:30:00');

@@ -31,8 +31,9 @@
     </body>
     <script>
         //url情報保持
-        const query = location.search;
+        const query = decodeURI(location.search);
         const value = query.split('=');
+        // console.log(query)
         const kname = document.getElementById("kname");
         const times = document.getElementById("times");
         kname.innerText = lName(value[5]);
