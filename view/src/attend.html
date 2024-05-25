@@ -10,13 +10,16 @@
    </head>
     <body>
         <div class="header">
-            <a href="./home"><div class="backBtn"></div></a>
-            <a href="./home"><div class="homeBtn"></div></a>
-            <div class="logo"></div>
-        </div>
-        <div class="namePlate">
-            <div class="line"></div>
-        </div>
+			<a href="./home" id="back"><div class="backBtn"></div></a>
+			<a href="./home" id="home"><div class="homeBtn"></div></a>
+			<div class="logo"></div>
+		</div>  
+		<div class="namePlate">
+			<div id="major" class="major"></div>
+			<div id="grade" class="grade"></div>
+			<div id="number" class="number"></div>
+			<div id="name" class="name"></div>
+		</div>
         <div class="attendPlate">
             <span class="innerHome">出席確認</span>
         </div>
@@ -45,9 +48,13 @@
         </div>
         <div class="footer"></div>
     </body>
+    
     <script>
+        const query = location.search;
+        const value = query.split('=');
         //fetch() は Promise を返す（返り値を変数に代入する場合）
-        const promise = fetch('http://localhost:1323/attendances');
+        const rurl='http://localhost:1323/attendances/'+value[3];
+        const promise = fetch(rurl);
         
         //fetch() のレスポンス（リクエストの結果）を then() メソッドで処理
         promise.then((response) => {
@@ -99,11 +106,74 @@
             }
         }
         function lName(a){
-            if(a=="Computer"){
-                return "PC";
-            }else if(a=="Engilsh"){
+            if(a=="Japanese"){
+                 return "日本語";
+            }else if(a=="English"||a=="Engilsh"){
                 return "英語";
+            }else if(a=="Math"){
+                return "数学";
+            }else if((a=="Social_studies")||(a=="Soclal_studies")){
+                return "社会";
+            }else if(a=="Politics_and_economics"){
+                return "政治・経済";
+            }else if(a=="Science"){
+                return "科学";
+            }else if(a=="Art"){
+                return "美術";
+            }else if(a=="Music"){
+                return "音楽";
+            }else if(a=="Physical_education"){
+                return "物理学";
+            }else if(a=="Special_activities"){
+                return "特別活動";
+            }else if(a=="Period_for_integrated_study"){
+                return "総合学習";
+            }else if(a=="Health"){
+                return "保険";
+            }else{
+                return a;
             }
         }
-    </script>
+
+        //homeurlにデータ付与
+        const home = document.getElementById("home");
+        home.href="./home?name="+value[1]+"="+value[2]+"="+value[3]+"="+value[4]; 
+        //homeurlにデータ付与
+        const home2 = document.getElementById("back");
+        home2.href="./home?name="+value[1]+"="+value[2]+"="+value[3]+"="+value[4]; 
+        //divのid取得
+		const major=document.getElementById('major');
+		const grade=document.getElementById('grade');
+		const number=document.getElementById('number');
+		const name=document.getElementById('name');
+	  //loginした人のデータ表示
+		major.innerText = Cmajor(value[1]);
+		grade.innerText = "第"+value[2]+"学年";
+		number.innerText = "学生番号:"+value[3];
+		name.innerText = Cname(value[4]);
+
+        function Cname(a){
+            if(a=="IyodaAkira"){
+              return "伊豫田彬";
+            }else if(a=="YamadaTarou"){
+              return "山田太郎";
+            }else if(a=="SuzukiHanako"){
+              return "鈴木花子";
+            }else if(a=="SatouRin"){
+              return "佐藤凛";
+            }else if(a=="HakaseTarou"){
+              return "博士太郎";
+            }else{
+              return a;
+            }
+         }       
+
+        function Cmajor(a){
+          if(a=="Management_Information_Systems"){
+            return "経営情報システム専攻";
+          }else{
+            return a;
+          }
+        }
+	</script>
 </html>
