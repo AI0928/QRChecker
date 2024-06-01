@@ -5,100 +5,53 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/Kubosaka/qrchecker/api/drivers"
-
+	"github.com/AI0928/QRChecker/api/model"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
-type User struct {
-	Id         int    `json:"id" `
-	User_Id    int    `json:"user_id" param:"user_id"`
-	Faculty    string `json:"faculty"`
-	Department string `json:"department"`
-	Major      string `json:"major"`
-	Course     string `json:"course"`
-	Grade      int    `json:"grade"`
-	Name       string `json:"name"`
-	Email      string `json:"email"`
-	Password   string `json:"password"`
-}
-
-type Lectures struct {
-	Id         int    `json:"id" param:"id"`
-	Number     int    `json:"number" param:"lecture_id"`
-	Name       string `json:"name"`
-	Teacher    string `json:"teacher"`
-	Year       string `json:"year"`
-	Start_time string `json:"start_time"`
-	End_time   string `json:"end_time"`
-}
-
-type Attendances struct {
-	Id             int    `json:"id"`
-	Lecture_Number int    `json:"lecture_number"  param:"lecture_id"`
-	User_Number    int    `json:"user_number" param:"user_id"`
-	First          string `json:"first"`
-	Second         string `json:"second"`
-	Third          string `json:"third"`
-	Fourth         string `json:"fourth"`
-	Fifth          string `json:"fifth"`
-	Sixth          string `json:"sixth"`
-	Seventh        string `json:"seventh"`
-	Eighth         string `json:"eighth"`
-	Ninth          string `json:"ninth"`
-	Tenth          string `json:"tenth"`
-	Eleventh       string `json:"eleventh"`
-	Twelfth        string `json:"twelfth"`
-	Thirteenth     string `json:"thirteenth"`
-	Fourteenth     string `json:"fourteenth"`
-	Fifteenth      string `json:"fifteenth"`
-}
-
 func getUsers(c echo.Context) error {
-	users := []User{}
-	drivers.DB.Find(&users)
-	//fmt.Println(users)
+	users := []model.User{}
+	model.DB.Find(&users)
 	return c.JSON(http.StatusOK, users)
 }
 
 func getUser(c echo.Context) error {
-	user := User{}
+	user := model.User{}
 	if err := c.Bind(&user); err != nil {
 		return err
 	}
-	drivers.DB.Take(&user)
+	model.DB.Take(&user)
 	return c.JSON(http.StatusOK, user)
 }
 
 func getLectures(c echo.Context) error {
-	Lectures := []Lectures{}
-	drivers.DB.Find(&Lectures)
+	Lectures := []model.Lecture{}
+	model.DB.Find(&Lectures)
 	//fmt.Println(Lectures)
 	return c.JSON(http.StatusOK, Lectures)
 }
 
 func getLecture(c echo.Context) error {
-	lecture := Lectures{}
+	lecture := model.Lecture{}
 	if err := c.Bind(&lecture); err != nil {
 		return err
 	}
-	drivers.DB.Take(&lecture)
+	model.DB.Take(&lecture)
 	return c.JSON(http.StatusOK, lecture)
 }
 
 func getAttendances(c echo.Context) error {
-	attendances := []Attendances{}
-	drivers.DB.Find(&attendances)
+	attendances := []model.Attendance{}
+	model.DB.Find(&attendances)
 	//fmt.Println(attendances)
 	return c.JSON(http.StatusOK, attendances)
 }
 
 func updateAttendance(c echo.Context) error {
 	//fmt.Println("出席")
-	attendance := Attendances{}
-	attendances := []Attendances{}
-	drivers.DB.Find(&attendances)
+	attendance := model.Attendance{}
+	attendances := []model.Attendance{}
+	model.DB.Find(&attendances)
 	if err := c.Bind(&attendance); err != nil {
 		return err
 	}
@@ -158,16 +111,16 @@ func updateAttendance(c echo.Context) error {
 		attendance.Fifteenth = c.Param("atenndanceStatus")
 	}
 
-	drivers.DB.Save(&attendance)
+	model.DB.Save(&attendance)
 	return c.JSON(http.StatusCreated, attendance)
 }
 
 func getAttendance(c echo.Context) error {
 	//attendance := Attendances{}
-	attendances := []Attendances{}
-	returnAttendance := []Attendances{}
+	attendances := []model.Attendance{}
+	returnAttendance := []model.Attendance{}
 
-	drivers.DB.Find(&attendances)
+	model.DB.Find(&attendances)
 	//fmt.Println(attendances)
 
 	// if err := c.Bind(&attendance); err != nil {
@@ -191,31 +144,9 @@ func getHealthy(c echo.Context) error {
 }
 
 func main() {
-	//echoのインスタンス
-	e := echo.New()
+	router := newRouter()
+	router.Logger.Fatal(router.Start(":1323"))
 
-	// Middleware
-	e.Use(middleware.Recover())
-
-	//db接続
-	drivers.Connect()
-	sqlDB, _ := drivers.DB.DB()
+	sqlDB, _ := model.DB.DB()
 	defer sqlDB.Close()
-
-	// CORS対策
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:8000", "127.0.0.1:8000", "http://localhost:1323"}, // ドメイン
-		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
-	}))
-
-	e.GET("/healthy", getHealthy)
-	e.GET("/users", getUsers)
-	e.GET("/users/:user_id", getUser)
-	e.GET("/lectures", getLectures)
-	e.GET("/lecture/:lecture_id", getLecture)
-	e.GET("/attendances", getAttendances)
-	e.GET("/attendances/:user_id", getAttendance)
-	e.PUT("/attendances/:lecture_id/:user_id/:count/:atenndanceStatus", updateAttendance)
-
-	e.Logger.Fatal(e.Start(":1323"))
 }

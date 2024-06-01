@@ -1,4 +1,4 @@
-module github.com/Kubosaka/qrchecker/api
+module github.com/AI0928/QRChecker/api
 
 go 1.19
 
