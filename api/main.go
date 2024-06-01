@@ -12,8 +12,8 @@ import (
 )
 
 type User struct {
-	Id         int    `json:"id" param:"id"`
-	User_Id    int    `json:"user_id"`
+	Id         int    `json:"id" `
+	User_Id    int    `json:"user_id" param:"user_id"`
 	Faculty    string `json:"faculty"`
 	Department string `json:"department"`
 	Major      string `json:"major"`
@@ -38,7 +38,6 @@ type Attendances struct {
 	Id             int    `json:"id"`
 	Lecture_Number int    `json:"lecture_number"  param:"lecture_id"`
 	User_Number    int    `json:"user_number" param:"user_id"`
-	User_Name      string `json:"user_name" param:"user_name"`
 	First          string `json:"first"`
 	Second         string `json:"second"`
 	Third          string `json:"third"`
@@ -127,35 +126,35 @@ func updateAttendance(c echo.Context) error {
 
 	//fmt.Println(c)
 	switch c.Param("count") {
-	case "first":
+	case "1":
 		attendance.First = c.Param("atenndanceStatus")
-	case "second":
+	case "2":
 		attendance.Second = c.Param("atenndanceStatus")
-	case "third":
+	case "3":
 		attendance.Third = c.Param("atenndanceStatus")
-	case "fourth":
+	case "4":
 		attendance.Fourth = c.Param("atenndanceStatus")
-	case "fifth":
+	case "5":
 		attendance.Fifth = c.Param("atenndanceStatus")
-	case "sixth":
+	case "6":
 		attendance.Sixth = c.Param("atenndanceStatus")
-	case "seventh":
+	case "7":
 		attendance.Seventh = c.Param("atenndanceStatus")
-	case "eighth":
+	case "8":
 		attendance.Eighth = c.Param("atenndanceStatus")
-	case "ninth":
+	case "9":
 		attendance.Ninth = c.Param("atenndanceStatus")
-	case "tenth":
+	case "10":
 		attendance.Tenth = c.Param("atenndanceStatus")
-	case "eleventh":
+	case "11":
 		attendance.Eleventh = c.Param("atenndanceStatus")
-	case "twelfth":
+	case "12":
 		attendance.Twelfth = c.Param("atenndanceStatus")
-	case "thirteenth":
+	case "13":
 		attendance.Thirteenth = c.Param("atenndanceStatus")
-	case "fourteenth":
+	case "14":
 		attendance.Fourteenth = c.Param("atenndanceStatus")
-	case "fifteenth":
+	case "15":
 		attendance.Fifteenth = c.Param("atenndanceStatus")
 	}
 
@@ -211,12 +210,12 @@ func main() {
 
 	e.GET("/healthy", getHealthy)
 	e.GET("/users", getUsers)
-	e.GET("/users/:id", getUser)
+	e.GET("/users/:user_id", getUser)
 	e.GET("/lectures", getLectures)
 	e.GET("/lecture/:lecture_id", getLecture)
 	e.GET("/attendances", getAttendances)
 	e.GET("/attendances/:user_id", getAttendance)
-	e.PUT("/attendances/:lecture_id/:user_id/:user_name/:count/:atenndanceStatus", updateAttendance)
+	e.PUT("/attendances/:lecture_id/:user_id/:count/:atenndanceStatus", updateAttendance)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

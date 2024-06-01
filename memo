@@ -1,0 +1,4 @@
+ show variables like "chara%";
+ source docker-entrypoint-initdb.d/init.sql;
+ source docker-entrypoint-initdb.d/lectures.sql;
+ source docker-entrypoint-initdb.d/attendances.sql;

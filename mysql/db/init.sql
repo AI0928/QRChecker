@@ -1,16 +1,16 @@
 -- DROP DATABASE IF EXISTS sample_db;
 -- CREATE DATABASE sample_db;
-SET CHARACTER SET utf8;
+SET CHARACTER SET utf8mb4;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT,
-  `学部` VARCHAR(255),
-  `学科` VARCHAR(255),
-  `専攻` VARCHAR(255),
-  `課程` VARCHAR(255),
-  `学年` VARCHAR(255),
+  `faculty` VARCHAR(255),
+  `department` VARCHAR(255),
+  `major` VARCHAR(255),
+  `course` VARCHAR(255),
+  `grade` VARCHAR(255),
   `name` VARCHAR(255),
   `email` VARCHAR(255),
   `password` VARCHAR(255),

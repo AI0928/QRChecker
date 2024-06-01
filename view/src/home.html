@@ -8,7 +8,6 @@
     <link rel="stylesheet" type="text/css" href="./index.css">
 		<title>ホーム画面</title>
   </head>
-  <body>
     <div class="header">
       <a href="./login"><div class="backBtn"></div></a>
       <a href="./home" id="home"><div class="homeBtn"></div></a>
@@ -27,53 +26,36 @@
 		  <span class="innerHome">出欠確認画面</span>
     </a>
     <div class="footer"></div>
-  </body>
   <script>
-    //url情報保持
-    const query = location.search;
-    const value = query.split('=');
-    //divのid取得
-    const major=document.getElementById('major');
-    const grade=document.getElementById('grade');
-    const number=document.getElementById('number');
-    const name=document.getElementById('name');
-    //loginした人のデータ表示
-    major.innerText = Cmajor(value[1]);
-    grade.innerText = "第"+value[2]+"学年";
-    number.innerText = "学生番号:"+value[3];
-    name.innerText = Cname(value[4]);
-    //ログインurlにデータ付与
-    const url = document.getElementById("QRurl");
-    url.href="./QRread?name="+value[1]+"="+value[2]+"="+value[3]+"="+value[4]; 
-    //出席確認ページにデータ送付
-    const url2= document.getElementById("ATurl");
-    url2.href="./attend?name="+value[1]+"="+value[2]+"="+value[3]+"="+value[4];  
-    //ホームurlにデータ付与
-    const url3= document.getElementById("home");
-    url3.href="./home?name="+value[1]+"="+value[2]+"="+value[3]+"="+value[4]; 
-
-    function Cname(a){
-      if(a=="IyodaAkira"){
-        return "伊豫田彬";
-      }else if(a=="YamadaTarou"){
-        return "山田太郎";
-      }else if(a=="SuzukiHanako"){
-        return "鈴木花子";
-      }else if(a=="SatouRin"){
-        return "佐藤凛";
-      }else if(a=="HakaseTarou"){
-        return "博士太郎";
-      }else{
-        return a;
-      }
+    async function fetchAsync(){
+      const id = location.search.split('=')[1];
+      console.log(id)
+      const user_url = 'http://localhost:1323/users/' + id[1]; //usersのJSON
+      const response = await fetch(user_url);
+      const json = await response.json();
+      // url情報保持
+      // divのid取得
+      const major=document.getElementById('major');
+      const grade=document.getElementById('grade');
+      const number=document.getElementById('number');
+      const name=document.getElementById('name');
+      //loginした人のデータ表示
+      console.log(user_url, json)
+      major.innerText = json.major;
+      grade.innerText = json.grade+"年";
+      number.innerText = "学籍番号:"+json.user_id;
+      name.innerText = json.name;
+      //ログインurlにデータ付与
+      const url = document.getElementById("QRurl");
+      url.href="./QRread?id="+id; 
+      //出席確認ページにデータ送付
+      const url2= document.getElementById("ATurl");
+      url2.href="./attend?id="+id; 
+      const url3= document.getElementById("home");
+      url3.href="./home?id="+id; 
     }
-
-    function Cmajor(a){
-      if(a=="Management_Information_Systems"){
-        return "経営情報システム専攻";
-      }else{
-        return a;
-      }
-    }
+    
+    fetchAsync()
   </script>
+  </body>
 </html>

@@ -1,18 +1,17 @@
 window.addEventListener('load', () => {
     startQR();
 });
-
+const user_id = location.search.split('=')[1];
+const syusseki = "出席";
 const video = document.createElement('video');
 const canvasElement = document.getElementById('canvas');
 const canvas = canvasElement.getContext('2d');
 const loadingMessage = document.getElementById('loadingMessage');
 const outputContainer = document.getElementById('output');
 const outputMessage = document.getElementById('outputMessage');
-
 const myHeaders = new Headers();
 myHeaders.append('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
 myHeaders.append('Access-Control-Allow-Origin', 'http://localhost:1323');
-
 
 const startQR = () => {
     // console.log("startQR");
@@ -61,8 +60,8 @@ function tick() {
             video.style.display = 'none';
             video.pause();
             
-            time_check(code.data);
-
+            // time_check(code.data);
+            put(code.data, syusseki)
         } else {
             outputMessage.hidden = false;
         }
@@ -118,17 +117,16 @@ async function time_check(data){
         atenndanceStatus = '欠席';
     }
 }
+
 async function put(a, atenndanceStatus) {
     // console.log("put");
-    const query = location.search;
-    const value = query.split('=');
-    
-    const value2 = a.split('=');
+    const value = a.split('=');
+    const lecture_id = value[0];
+    const count = value[1];
     // e.PUT("/attendances/:lecture_id/:user_id/:user_name/:count", updateAttendance)
-    const rurl = 'http://localhost:1323/attendances/'+value2[0]+'/'+value[3]+'/'+value[4]+'/'+value2[1] + '/' + atenndanceStatus;
-    const rurl_lecture = 'http://localhost:1323/lecture/'+value2[0];
+    const rurl = 'http://localhost:1323/attendances/'+lecture_id+'/'+user_id+'/'+count + '/' + atenndanceStatus;
+    const rurl_lecture = 'http://localhost:1323/lecture/'+lecture_id;
     console.log(rurl)
-    
 
     const putparameter = {
         method: 'PUT',
@@ -148,7 +146,7 @@ async function put(a, atenndanceStatus) {
         return response.json();
     });
 
-    const url='./check?name='+value[1]+'='+value[2]+'='+value[3]+'='+value[4]+'='+lecture.name+'='+value2[1];
+    const url='./check?id='+'='+user_id+'='+lecture.name+'='+count+'='+atenndanceStatus;
     window.location.href = url;
 }
 

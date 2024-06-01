@@ -6,7 +6,7 @@
      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
      <link rel="stylesheet" type="text/css" href="./index.css">
      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		 <title>出席登録完了</title>
+		 <title>登録完了</title>
     </head>
     <body>
         <div class="header">
@@ -25,125 +25,52 @@
             </span> -->
             <div id="kname"></div>
             <div id="times"></div>
+            <div id="attendance_status"></div>
             <div>出席登録完了</div>
           </div>
         <div class="footer"></div>
     </body>
     <script>
-        //url情報保持
-        const query = decodeURI(location.search);
-        const value = query.split('=');
-        // console.log(query)
-        const kname = document.getElementById("kname");
-        const times = document.getElementById("times");
-        kname.innerText = lName(value[5]);
-        times.innerText = ltimes(value[6]);
-
-        //homeurlにデータ付与
-        const home = document.getElementById("home");
-        home.href="./home?name="+value[1]+"="+value[2]+"="+value[3]+"="+value[4]; 
-        //homeurlにデータ付与
-        const home2 = document.getElementById("back");
-        home2.href="./QRread?name="+value[1]+"="+value[2]+"="+value[3]+"="+value[4]; 
-	      //divのid取得
-		const major=document.getElementById('major');
-		const grade=document.getElementById('grade');
-		const number=document.getElementById('number');
-		const name=document.getElementById('name');
-	      //loginした人のデータ表示
-		major.innerText = Cmajor(value[1]);
-		grade.innerText = "第"+value[2]+"学年";
-		number.innerText = "学生番号:"+value[3];
-		name.innerText = Cname(value[4]);
-
-       function lName(a){
-            if(a=="Japanese"){
-                 return "日本語";
-            }else if(a=="English"||a=="Engilsh"){
-                return "英語";
-            }else if(a=="Math"){
-                return "数学";
-            }else if((a=="Social_studies")||(a=="Soclal_studies")){
-                return "社会";
-            }else if(a=="Politics_and_economics"){
-                return "政治・経済";
-            }else if(a=="Science"){
-                return "科学";
-            }else if(a=="Art"){
-                return "美術";
-            }else if(a=="Music"){
-                return "音楽";
-            }else if(a=="Physical_education"){
-                return "物理学";
-            }else if(a=="Special_activities"){
-                return "特別活動";
-            }else if(a=="Period_for_integrated_study"){
-                return "総合学習";
-            }else if(a=="Health"){
-                return "ほけ";
-            }else{
-                return a;
-            }
+        function outputAttendance(){
+            const lecture_name = location.search.split('=')[2];
+            const count = location.search.split('=')[3];
+            const attendance_status = location.search.split('=')[3];
+            console.log(lecture_name, count, attendance_status)
+            const kname=document.getElementById('kname');
+            const times=document.getElementById('times');
+            const as_place=document.getElementById('attendance_status');
+            kname.innerText = lecture_name;
+            times.innerText = count+"回";
+            as_place.innerText = attendance_status;
         }
 
-        function ltimes(a){
-            if(a=="first"){
-                 return "第1回";
-            }else if(a=="second"){
-                return "第2回";
-            }else if(a=="third"){
-                return "第3回";
-            }else if(a=="fourth"){
-                return "第4回";
-            }else if(a=="fifth"){
-                return "第5回";
-            }else if(a=="sixth"){
-                return "第6回";
-            }else if(a=="seventh"){
-                return "第7回";
-            }else if(a=="eighth"){
-                return "第8回";
-            }else if(a=="ninth"){
-                return "第9回";
-            }else if(a=="tenth"){
-                return "第10回";
-            }else if(a=="eleventh"){
-                return "第11回";
-            }else if(a=="twelfth"){
-                return "第12回";
-            }else if(a=="thirteenth"){
-                return "第13回";
-            }else if(a=="fourteenth"){
-                return "第14回";
-            }else if(a=="fifteenth"){
-                return "第15回";
-            }else{
-                return a;
-            }
+        async function fetchAsync(){
+            const id = location.search.split('=')[1];
+            console.log(id)
+            const user_url = 'http://localhost:1323/users/' + id[1]; //usersのJSON
+            const response = await fetch(user_url);
+            const json = await response.json();
+            // url情報保持
+            // divのid取得
+            const major=document.getElementById('major');
+            const grade=document.getElementById('grade');
+            const number=document.getElementById('number');
+            const name=document.getElementById('name');
+            //loginした人のデータ表示
+            console.log(user_url, json)
+            major.innerText = json.major;
+            grade.innerText = json.grade+"年";
+            number.innerText = "学籍番号:"+json.user_id;
+            name.innerText = json.name;
+            //出席確認ページにデータ送付
+            const url3= document.getElementById("home");
+            url3.href="./home?id="+id; 
+            //homeurlにデータ付与
+            const home2 = document.getElementById("back");
+            home2.href="./QRread?id="+id;
         }
-
-        function Cname(a){
-            if(a=="IyodaAkira"){
-              return "伊豫田彬";
-            }else if(a=="YamadaTarou"){
-              return "山田太郎";
-            }else if(a=="SuzukiHanako"){
-              return "鈴木花子";
-            }else if(a=="SatouRin"){
-              return "佐藤凛";
-            }else if(a=="HakaseTarou"){
-              return "博士太郎";
-            }else{
-              return a;
-            }
-         }       
-
-        function Cmajor(a){
-          if(a=="Management_Information_Systems"){
-            return "経営情報システム専攻";
-          }else{
-            return a;
-          }
-        }
+                
+        fetchAsync()
+        outputAttendance()
     </script>
 </html>

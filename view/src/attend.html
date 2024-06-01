@@ -2,6 +2,7 @@
 <html lang="ja">
     <head>
        <meta charset="UTF-8" />
+       <meta http-equiv="content-type" content="text/html charset=UTF-8">
        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
        <link rel="stylesheet" type="text/css" href="./table.css">
@@ -47,153 +48,98 @@
         </table>
         </div>
         <div class="footer"></div>
+        <script>
+            const lecture_names = {};
+            const id = location.search.split('=')[1];
+            function setURL() {
+                //homeurlにデータ付与
+                const home = document.getElementById("home");
+                home.href="./home?id="+id; 
+                //homeurlにデータ付与
+                const home2 = document.getElementById("back");
+                home2.href="./home?id="+id; 
+            }
+            async function fetchUser(){
+                const user_url = 'http://localhost:1323/users/' + id[1]; //usersのJSON
+                const response = await fetch(user_url);
+                const json = await response.json();
+                // url情報保持
+                // divのid取得
+                const major=document.getElementById('major');
+                const grade=document.getElementById('grade');
+                const number=document.getElementById('number');
+                const name=document.getElementById('name');
+                //loginした人のデータ表示
+                major.innerText = json.major;
+                grade.innerText = json.grade+"年";
+                number.innerText = "学籍番号:"+json.user_id;
+                name.innerText = json.name;
+            }
+
+            async function getLectures() {
+                const rurl_lecture = 'http://localhost:1323/lectures';
+                const promise_lectures = fetch(rurl_lecture);
+                //fetch() のレスポンス（リクエストの結果）を then() メソッドで処理
+                promise_lectures.then((response) => {
+                    return response.json();
+                })
+                .then(function (json) {
+                    for (var i = 0; i < json.length; i++) {
+                        lecture_names[json[i].number] = json[i].name;
+                    }
+                });
+            }
+            
+            async function getAttendances() {
+                getLectures()
+                const rurl='http://localhost:1323/attendances/'+id;
+                const promise = fetch(rurl);
+                //fetch() のレスポンス（リクエストの結果）を then() メソッドで処理
+                promise.then((response) => {
+                    return response.json();
+                })
+                .then(function (json) {
+                    for (var i = 0; i < json.length; i++) {
+                        var lecture_name = lecture_names[json[i].lecture_number]
+                        var first = json[i].first;
+                        var second = json[i].second;
+                        var third = json[i].third;
+                        var fourth = json[i].fourth;
+                        var fifth = json[i].fifth;
+                        var sixth = json[i].sixth;
+                        var seventh = json[i].seventh;
+                        var eighth = json[i].eighth;
+                        var ninth = json[i].ninth;
+                        var tenth = json[i].tenth;
+                        var eleventh = json[i].eleventh;
+                        var twelfth = json[i].twelfth;
+                        var thirteenth = json[i].thirteenth;
+                        var fourteenth = json[i].fourteenth;
+                        var fifteenth = json[i].fifteenth;
+                        //表形式でデータを表示する
+                        var row = document.getElementById('at-list-hedder').insertRow();
+                        row.insertCell().textContent = lecture_name;
+                        row.insertCell().textContent = first;
+                        row.insertCell().textContent = second;
+                        row.insertCell().textContent = third;
+                        row.insertCell().textContent = fourth;
+                        row.insertCell().textContent = fifth;
+                        row.insertCell().textContent = sixth;
+                        row.insertCell().textContent = seventh;
+                        row.insertCell().textContent = eighth;
+                        row.insertCell().textContent = ninth;
+                        row.insertCell().textContent = tenth;
+                        row.insertCell().textContent = eleventh;
+                        row.insertCell().textContent = twelfth;
+                        row.insertCell().textContent = thirteenth;
+                        row.insertCell().textContent = fourteenth;
+                        row.insertCell().textContent = fifteenth;
+                    }
+                });
+            }
+            setURL()
+            fetchUser()
+            getAttendances()
+        </script> 
     </body>
-    
-    <script>
-        const query = location.search;
-        const value = query.split('=');
-        const lecture_names = {}
-        //fetch() は Promise を返す（返り値を変数に代入する場合）
-        const rurl_lecture = 'http://localhost:1323/lectures';
-        const myHeaders = new Headers();
-        myHeaders.append('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
-        myHeaders.append('Access-Control-Allow-Origin', 'http://localhost:1323');
-        const getparameter = {
-          method: 'GET',
-          headers: myHeaders,
-        }
-        //const lectures = fetch(rurl_lecture, getparameter);
-        fetch(rurl_lecture)
-        .then(response => response.json())
-        .then(data => {
-          for (i = 0; i < data.length; i++){
-            lecture_names[data[i].number] = data[i].name
-          }
-        });
-        
-        const rurl='http://localhost:1323/attendances/'+value[3];
-
-        const promise = fetch(rurl);
-        //fetch() のレスポンス（リクエストの結果）を then() メソッドで処理
-        promise.then((response) => {
-          return response.json();
-        })
-        .then(function (json) {
-            for (var i = 0; i < json.length; i++) {
-                var lecture_name = lecture_names[json[i].lecture_number]
-                var first = json[i].first;
-                var second = json[i].second;
-                var third = json[i].third;
-                var fourth = json[i].fourth;
-                var fifth = json[i].fifth;
-                var sixth = json[i].sixth;
-                var seventh = json[i].seventh;
-                var eighth = json[i].eighth;
-                var ninth = json[i].ninth;
-                var tenth = json[i].tenth;
-                var eleventh = json[i].eleventh;
-                var twelfth = json[i].twelfth;
-                var thirteenth = json[i].thirteenth;
-                var fourteenth = json[i].fourteenth;
-                var fifteenth = json[i].fifteenth;
-                //表形式でデータを表示する
-                var row = document.getElementById('at-list-hedder').insertRow();
-                row.insertCell().textContent = lecture_name;
-                row.insertCell().textContent = attend(first);
-                row.insertCell().textContent = attend(second);
-                row.insertCell().textContent = attend(third);
-                row.insertCell().textContent = attend(fourth);
-                row.insertCell().textContent = attend(fifth);
-                row.insertCell().textContent = attend(sixth);
-                row.insertCell().textContent = attend(seventh);
-                row.insertCell().textContent = attend(eighth);
-                row.insertCell().textContent = attend(ninth);
-                row.insertCell().textContent = attend(tenth);
-                row.insertCell().textContent = attend(eleventh);
-                row.insertCell().textContent = attend(twelfth);
-                row.insertCell().textContent = attend(thirteenth);
-                row.insertCell().textContent = attend(fourteenth);
-                row.insertCell().textContent = attend(fifteenth);
-            }
-        });
-        function attend(a){
-            if(a==true){
-                return "○";
-            }else{
-                return " ";
-            }
-        }
-        // function lName(a){
-        //     if(a=="Japanese"){
-        //          return "日本語";
-        //     }else if(a=="English"||a=="Engilsh"){
-        //         return "英語";
-        //     }else if(a=="Math"){
-        //         return "数学";
-        //     }else if((a=="Social_studies")||(a=="Soclal_studies")){
-        //         return "社会";
-        //     }else if(a=="Politics_and_economics"){
-        //         return "政治・経済";
-        //     }else if(a=="Science"){
-        //         return "科学";
-        //     }else if(a=="Art"){
-        //         return "美術";
-        //     }else if(a=="Music"){
-        //         return "音楽";
-        //     }else if(a=="Physical_education"){
-        //         return "物理学";
-        //     }else if(a=="Special_activities"){
-        //         return "特別活動";
-        //     }else if(a=="Period_for_integrated_study"){
-        //         return "総合学習";
-        //     }else if(a=="Health"){
-        //         return "保険";
-        //     }else if(a=="プログラミング"){
-        //         return "プログラミング";
-        //     }else{
-        //         return a;
-        //     }
-        // }
-
-        //homeurlにデータ付与
-        const home = document.getElementById("home");
-        home.href="./home?name="+value[1]+"="+value[2]+"="+value[3]+"="+value[4]; 
-        //homeurlにデータ付与
-        const home2 = document.getElementById("back");
-        home2.href="./home?name="+value[1]+"="+value[2]+"="+value[3]+"="+value[4]; 
-        //divのid取得
-		const major=document.getElementById('major');
-		const grade=document.getElementById('grade');
-		const number=document.getElementById('number');
-		const name=document.getElementById('name');
-	  //loginした人のデータ表示
-		major.innerText = Cmajor(value[1]);
-		grade.innerText = "第"+value[2]+"学年";
-		number.innerText = "学生番号:"+value[3];
-		name.innerText = Cname(value[4]);
-
-        function Cname(a){
-            if(a=="IyodaAkira"){
-              return "伊豫田彬";
-            }else if(a=="YamadaTarou"){
-              return "山田太郎";
-            }else if(a=="SuzukiHanako"){
-              return "鈴木花子";
-            }else if(a=="SatouRin"){
-              return "佐藤凛";
-            }else if(a=="HakaseTarou"){
-              return "博士太郎";
-            }else{
-              return a;
-            }
-         }       
-
-        function Cmajor(a){
-          if(a=="Management_Information_Systems"){
-            return "経営情報システム専攻";
-          }else{
-            return a;
-          }
-        }
-	</script>
 </html>
