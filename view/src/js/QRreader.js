@@ -62,6 +62,7 @@ function tick() {
             
             // time_check(code.data);
             put(code.data, syusseki)
+            return
         } else {
             outputMessage.hidden = false;
         }
